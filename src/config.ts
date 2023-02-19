@@ -4,7 +4,7 @@ import {IPluginConfig} from "electron-picgo";
 import {IConfig} from './util'
 
 export const config: (ctx: PicGo) => IPluginConfig[] = ctx => {
-  let userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark-electron");
+  let userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark-elec");
   if (!userConfig) {
     userConfig = {
       image: '',

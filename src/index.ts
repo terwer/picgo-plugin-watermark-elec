@@ -7,7 +7,7 @@ import {inputAddWaterMarkHandle} from "./input";
 
 const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
   const input = ctx.input;
-  const userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark-electron");
+  const userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark-elec");
 
   const [
     errors,

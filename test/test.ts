@@ -76,7 +76,7 @@ const test = async () => {
 //   // Mock开始
 //   // ==================
 //   const ctx = {
-//     baseDir: "/Users/terwer/Documents/mydocs/picgo-plugins/picgo-plugin-watermark-electron"
+//     baseDir: "/Users/terwer/Documents/mydocs/picgo-plugins/picgo-plugin-watermark-elec"
 //   }
 //
 //   // rt 右上

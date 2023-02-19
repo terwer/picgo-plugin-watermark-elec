@@ -1,5 +1,5 @@
 {
-  "name": "picgo-plugin-watermark-electron",
+  "name": "picgo-plugin-watermark-elec",
   "version": "1.2.2",
   "description": "PicGo's watermark plugin for electron",
   "main": "./lib/index.js",
@@ -23,9 +23,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/terwer/picgo-plugin-watermark-electron"
+    "url": "https://github.com/terwer/picgo-plugin-watermark-elec"
   },
-  "homepage": "https://github.com/terwer/picgo-plugin-watermark-electron",
+  "homepage": "https://github.com/terwer/picgo-plugin-watermark-elec",
   "keywords": [
     "npm",
     "node",
