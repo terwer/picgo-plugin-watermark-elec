@@ -1,9 +1,11 @@
-import { type PicGo } from 'electron-picgo'
+import {type PicGo} from 'electron-picgo'
 
-import { type IConfig, isEmptyString, parseAndValidate } from './util'
-import { getSvg } from './text2svg'
-import { config } from './config'
-import { inputAddWaterMarkHandle } from './input'
+import {type IConfig, isEmptyString, parseAndValidate} from './util'
+import {getSvg} from './text2svg'
+import {config} from './config'
+import {inputAddWaterMarkHandle} from './input'
+import path from "path";
+import * as buffer from "buffer";
 
 const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
   const input = ctx.input
@@ -35,12 +37,20 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
     waterMark = image
   } else {
     console.log('当前使用文字水印')
+    // const defaultFontFamily = path.join(ctx.baseDir, "Arial, Sans")
+    const pluginPath = path.join(ctx.baseDir, "node_modules/picgo-plugin-watermark-elec")
+    const defaultFontFamilyTtf = path.join(pluginPath, "fonts/Arial-Unicode-MS.ttf")
+    const svgFontFamily = fontFamily || defaultFontFamilyTtf
+
     const svgOptions: Record<string, any> = {}
     parsedFontSize && (svgOptions.fontSize = parsedFontSize)
     textColor && (svgOptions.fill = textColor)
-    fontFamily && (svgOptions.fontFamily = fontFamily || 'Arial, Sans')
+    svgFontFamily && (svgOptions.fontFamily = svgFontFamily)
 
-    waterMark = getSvg(text || 'terwer', svgOptions)
+    waterMark = await getSvg(text || 'terwer.space', svgOptions)
+    if (!(waterMark instanceof Buffer)) {
+      throw new Error("水印格式异常" + waterMark)
+    }
   }
 
   try {
@@ -65,7 +75,7 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
 
 export = (ctx: PicGo): any => {
   const register: () => void = () => {
-    ctx.helper.beforeTransformPlugins.register('watermark', { handle })
+    ctx.helper.beforeTransformPlugins.register('watermark', {handle})
   }
   return {
     register,

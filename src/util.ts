@@ -90,7 +90,7 @@ export const parseAndValidate: (
   if (config) {
     position = config.position
     fontSize = config.fontSize
-    minSize = config.fontSize
+    minSize = config.minSize
     textColor = config.textColor
   }
   const parsedConfig: IConfig = { ...config }
@@ -107,7 +107,7 @@ export const parseAndValidate: (
   if (!isEmptyString(position) && !PositionType[position]) {
     errors.push('position')
   } else {
-    parsedConfig.position = position
+    parsedConfig.position = position || "rt"
   }
   if (!isEmptyString(minSize)) {
     const [minWidth, minHeight] = minSize.split('*').map((v: string) => +v)
@@ -124,6 +124,8 @@ export const parseAndValidate: (
     } catch (error) {
       errors.push('textColor')
     }
+  }else{
+    parsedConfig.textColor = Color("#af36c2").hex()
   }
   return [
     errors,
