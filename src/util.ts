@@ -73,18 +73,30 @@ export interface IConfig {
   parsedFontSize?: number;
 }
 
-const isEmptyFiled = (str) => {
-  return str !== null && str.trim() !== "";
+export const isEmptyString = (str: any): boolean => {
+  if (!str) {
+    return true
+  }
+  if (!(typeof str === "string")) {
+    return true
+  }
+  return str.trim().length === 0
 }
 
 export const parseAndValidate: (
   config: IConfig
 ) => [string[], IConfig] = config => {
-  const {position, fontSize, minSize, textColor} = config;
+  let position, fontSize, minSize, textColor
+  if (config) {
+    position = config.position
+    fontSize = config.fontSize
+    minSize = config.fontSize
+    textColor = config.textColor
+  }
   let parsedConfig: IConfig = {...config};
   let errors = [];
   // 无效数字且不为空
-  if (!isEmptyFiled(isEmptyFiled)) {
+  if (!isEmptyString(fontSize)) {
     if (isNaN(parseInt(fontSize))) {
       errors.push("fontSize");
     }
@@ -92,12 +104,12 @@ export const parseAndValidate: (
   } else {
     parsedConfig.parsedFontSize = 14;
   }
-  if (position && !PositionType[position]) {
+  if (!isEmptyString(position) && !PositionType[position]) {
     errors.push("position");
   } else {
     parsedConfig.position = "rt"
   }
-  if (!isEmptyFiled(minSize)) {
+  if (!isEmptyString(minSize)) {
     let [minWidth, minHeight] = minSize.split("*").map((v: string) => +v);
     if (!minWidth || !minHeight) {
       errors.push("minSize");
@@ -106,7 +118,7 @@ export const parseAndValidate: (
       parsedConfig.minWidth = minWidth;
     }
   }
-  if (!isEmptyFiled(textColor)) {
+  if (!isEmptyString(textColor)) {
     try {
       parsedConfig.textColor = Color(textColor).hex()
     } catch (error) {

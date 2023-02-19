@@ -29,7 +29,7 @@ export const config: (ctx: PicGo) => IPluginConfig[] = ctx => {
       name: "text",
       type: "input",
       default: userConfig.text,
-      required: true,
+      required: false,
       message: "文字，默认只支持英文，中文支持需要配置字体文件路径",
       alias: "水印文字"
     },

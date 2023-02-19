@@ -4,6 +4,8 @@ import {parseAndValidate, IConfig} from "./util";
 import {loadFontFamily, getSvg} from "./text2svg";
 import {config} from "./config";
 import {inputAddWaterMarkHandle} from "./input";
+import path from "path";
+import dayjs from "dayjs";
 
 const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
   const input = ctx.input;
@@ -35,7 +37,8 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
   } else {
     try {
       console.log("准备加载水印字体")
-      loadFontFamily(fontFamily || undefined);
+      const defaultFontFamily = path.join(ctx.baseDir, `node_modules/picgo-plugin-watermark-elec/fonts/Arial-Unicode-MS.ttf`)
+      loadFontFamily(fontFamily || defaultFontFamily);
       console.log("水印字体加载成功")
     } catch (error) {
       ctx.log.error("字体文件载入失败");
@@ -48,7 +51,7 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
     parsedFontSize && (svgOptions.fontSize = parsedFontSize)
     textColor && (svgOptions.fill = textColor)
     waterMark = Buffer.from(
-      getSvg(text, svgOptions)
+      getSvg(text || "terwer", svgOptions)
     );
   }
 
@@ -68,7 +71,7 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
   } catch (error) {
     ctx.log.error(error);
     // To prevent the next step
-    throw new Error("可能是水印图或字体文件路径无效，请检查。");
+    throw new Error("可能是水印图或字体文件路径无效，请检查。" + error);
   }
   return ctx;
 };
