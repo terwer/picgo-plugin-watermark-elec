@@ -1,15 +1,13 @@
-import {PicGo} from "electron-picgo";
+import { type PicGo } from 'electron-picgo'
 
-import {parseAndValidate, IConfig} from "./util";
-import {loadFontFamily, getSvg} from "./text2svg";
-import {config} from "./config";
-import {inputAddWaterMarkHandle} from "./input";
-import path from "path";
-import dayjs from "dayjs";
+import { type IConfig, isEmptyString, parseAndValidate } from './util'
+import { getSvg } from './text2svg'
+import { config } from './config'
+import { inputAddWaterMarkHandle } from './input'
 
 const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
-  const input = ctx.input;
-  const userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark-elec");
+  const input = ctx.input
+  const userConfig = ctx.getConfig<IConfig>('picgo-plugin-watermark-elec')
 
   const [
     errors,
@@ -21,42 +19,31 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
       fontFamily,
       minWidth,
       minHeight,
-      textColor,
+      textColor
     }
-  ] = parseAndValidate(userConfig);
+  ] = parseAndValidate(userConfig)
 
   // Verify configuration
   if (errors.length) {
     // To prevent the next step
-    throw new Error(errors.join("，") + "设置错误，请检查");
+    throw new Error(errors.join('，') + '设置错误，请检查')
   }
 
-  let waterMark = null;
-  if (image) {
-    waterMark = image;
+  let waterMark = null
+  if (!isEmptyString(image)) {
+    console.log('当前使用图片水印，水印图片路径=>', image)
+    waterMark = image
   } else {
-    try {
-      console.log("准备加载水印字体")
-      const defaultFontFamily = path.join(ctx.baseDir, `node_modules/picgo-plugin-watermark-elec/fonts/Arial-Unicode-MS.ttf`)
-      loadFontFamily(fontFamily || defaultFontFamily);
-      console.log("水印字体加载成功")
-    } catch (error) {
-      ctx.log.error("字体文件载入失败");
-      ctx.log.error(error);
-      // To prevent the next step
-      throw new Error("字体文件载入失败，请检查字体文件路径");
-    }
-
-    const svgOptions: { [key: string]: any } = {}
+    console.log('当前使用文字水印')
+    const svgOptions: Record<string, any> = {}
     parsedFontSize && (svgOptions.fontSize = parsedFontSize)
     textColor && (svgOptions.fill = textColor)
-    waterMark = Buffer.from(
-      getSvg(text || "terwer", svgOptions)
-    );
+    fontFamily && (svgOptions.fontFamily = fontFamily || 'Arial, Sans')
+
+    waterMark = getSvg(text || 'terwer', svgOptions)
   }
 
   try {
-    console.log("开始处理图片水印")
     ctx.input = await inputAddWaterMarkHandle(
       ctx,
       {
@@ -67,21 +54,21 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
         waterMark
       },
       ctx.log
-    );
+    )
   } catch (error) {
-    ctx.log.error(error);
+    ctx.log.error(error)
     // To prevent the next step
-    throw new Error("可能是水印图或字体文件路径无效，请检查。" + error);
+    throw new Error('可能是水印图或字体文件路径无效，请检查。' + error)
   }
-  return ctx;
-};
+  return ctx
+}
 
 export = (ctx: PicGo): any => {
   const register: () => void = () => {
-    ctx.helper.beforeTransformPlugins.register("watermark", {handle});
-  };
+    ctx.helper.beforeTransformPlugins.register('watermark', { handle })
+  }
   return {
     register,
     config
-  };
-};
+  }
+}

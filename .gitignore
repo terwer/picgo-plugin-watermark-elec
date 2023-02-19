@@ -45,3 +45,4 @@ others
 .cache
 dist
 fixture/
+test/textWatermark.png

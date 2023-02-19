@@ -1,15 +1,11 @@
-import TextToSVG from "text-to-svg";
-import { fontOptions } from "./attr";
+import { fontOptions } from './attr'
+import { UltimateTextToImage } from 'ultimate-text-to-image'
 
-let textToSVG = null;
-export const loadFontFamily = (fontFamily: string): void => {
-  textToSVG = TextToSVG.loadSync(fontFamily);
-};
 export const getSvg = (
   text: string,
-  options?: { fontSize?: number; [propName: string]: any }
-): string => {
-  const svgOptions: {[propName: string]: any} = {
+  options?: { fontSize?: number, [propName: string]: any }
+): Buffer => {
+  const svgOptions: Record<string, any> = {
     attributes: {},
     ...fontOptions
   }
@@ -21,6 +17,14 @@ export const getSvg = (
     if (options.fontSize) {
       svgOptions.fontSize = options.fontSize
     }
+    if (options.fill) {
+      svgOptions.fontColor = options.fill
+    }
+    if (options.fontFamily) {
+      svgOptions.fontFamily = options.fontFamily
+    }
   }
-  return textToSVG.getSVG(text, svgOptions);
-};
+
+  const textToImage = new UltimateTextToImage(text, options).render()
+  return textToImage.toBuffer()
+}

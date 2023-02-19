@@ -1,16 +1,16 @@
-import {Logger, PicGo} from "electron-picgo";
-import {getCoordinateByPosition, getImageBufferData, PositionType} from "./util";
-import images from "images";
-import path from "path";
-import dayjs from "dayjs";
-import fs from "fs-extra";
+import { type Logger, type PicGo } from 'electron-picgo'
+import { getCoordinateByPosition, getImageBufferData, PositionType } from './util'
+import images from 'images'
+import path from 'path'
+import dayjs from 'dayjs'
+import fs from 'fs-extra'
 
 interface IInput {
-  input: any[];
-  minWidth: number;
-  minHeight: number;
-  position: string;
-  waterMark: string | Buffer;
+  input: any[]
+  minWidth: number
+  minHeight: number
+  position: string
+  waterMark: string | Buffer
 }
 
 export const inputAddWaterMarkHandle: (
@@ -18,13 +18,13 @@ export const inputAddWaterMarkHandle: (
   iinput: IInput,
   logger: Logger
 ) => Promise<string[]> = async (ctx, imageInput, logger) => {
-  const {input, minWidth, minHeight, waterMark, position} = imageInput;
-  console.log("waterMark=>", waterMark)
-  console.log("position=>", position)
+  const { input, minWidth, minHeight, waterMark, position } = imageInput
+  console.log('waterMark=>', waterMark)
+  console.log('position=>', position)
 
   const addedWaterMarkInput = await Promise.all(
     input.map(async image => {
-      let addWaterMarkImagePath = '';
+      let addWaterMarkImagePath = ''
 
       let coordinate = {
         left: 0,
@@ -32,12 +32,21 @@ export const inputAddWaterMarkHandle: (
       }
 
       // 加载水印
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
-      const watermarkObj = images(waterMark)
+      console.log('准备加载水印，临时保存水印文件')
+      let watermarkObj
+      if (typeof waterMark === 'string') {
+        watermarkObj = images(waterMark)
+      } else {
+        watermarkObj = images(waterMark)
+      }
       const watermarkSize = watermarkObj.size()
+      const watermarkImagePath = path.join(ctx.baseDir, 'node_modules/picgo-plugin-watermark-elec/fonts/terwer.png')
+      watermarkObj.save(watermarkImagePath, {
+        quality: 50
+      })
+      console.log('加载水印，临时保存水印文件完成=>', watermarkImagePath)
 
-      //加载图像文件
+      // 加载图像文件
       const imageBuffer = await getImageBufferData(ctx, image)
       const imagesObj = images(imageBuffer)
       const size = imagesObj.size()
@@ -46,13 +55,15 @@ export const inputAddWaterMarkHandle: (
       // imagesObj.size(400)
       // 在(10,10)处绘制Logo
       coordinate = getCoordinateByPosition({
-        width: size.width, height: size.height, waterMark: {
+        width: size.width,
+        height: size.height,
+        waterMark: {
           width: watermarkSize.width,
           height: watermarkSize.height,
           position: PositionType[position]
         }
       })
-      console.log("coordinate=>", coordinate)
+      console.log('coordinate=>', coordinate)
 
       // Picture width or length is too short, do not add watermark
       // Or trigger minimum size limit
@@ -62,12 +73,12 @@ export const inputAddWaterMarkHandle: (
         size.width <= minWidth ||
         size.height <= minHeight
       ) {
-        addWaterMarkImagePath = image;
+        addWaterMarkImagePath = image
         logger.info('watermark 图片尺寸不满足，跳过水印添加')
       } else {
         const extname = path.extname(image) || 'png'
         addWaterMarkImagePath = path.join(ctx.baseDir, `${dayjs().format('YYYYMMDDHHmmss')}.${extname}`)
-        console.log("addWaterMarkImagePath=>", addWaterMarkImagePath)
+        console.log('addWaterMarkImagePath=>', addWaterMarkImagePath)
 
         ctx.once('failed', () => {
           // 删除 picgo 生成的图片文件，例如 `~/.picgo/20200621205720.png`
@@ -87,12 +98,12 @@ export const inputAddWaterMarkHandle: (
         // 保存图片到文件,图片质量为50
         imagesObj.save(addWaterMarkImagePath, {
           quality: 50
-        });
+        })
 
         logger.info('watermark 水印添加成功')
       }
       return addWaterMarkImagePath
     })
-  );
-  return addedWaterMarkInput;
-};
+  )
+  return addedWaterMarkInput
+}

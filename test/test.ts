@@ -70,6 +70,7 @@
 //   );
 // };
 //
+
 const test = async () => {
   console.log("hello")
 //   // ==================
@@ -95,6 +96,40 @@ const test = async () => {
 //   // ==================
 //   // Mock结束
 //   // ==================
+
+
+  // import { UltimateTextToImage} from "ultimate-text-to-image";
+  const {UltimateTextToImage} = require("ultimate-text-to-image");
+  const images = require("images")
+
+  const textToImage = new UltimateTextToImage(`abc xyz 0123456789 零一二三四五六七八九`, {
+    width: 150,
+    fontFamily: "Arial, Sans",
+    fontSize: 14,
+    fontColor: "#af36c2",
+    // margin: 20,
+    // marginBottom: 40,
+    align: "center",
+    valign: "middle",
+  }).render();
+  console.log("文章水印生成成功")
+
+  const buffer = textToImage.toBuffer();
+  const imagesObj = images(buffer)
+  imagesObj.save("test/textWatermark.png", {
+    quality: 50
+  });
+  console.log("文章水印保存成功")
+
+
+//   const textToImage = require('text-to-image');
+//
+// // using the asynchronous API with await
+//   const dataUri = await textToImage.generate('Lorem ipsum dolor sit amet');
+//   console.log(dataUri)
+//
+
+
 //   let addWaterMarkImagePath = ""
 //   const extname = path.extname(image) || 'png'
 //   addWaterMarkImagePath = path.join(ctx.baseDir, `lib/test/${dayjs().format('YYYYMMDDHHmmss')}.${extname}`)

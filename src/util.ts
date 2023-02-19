@@ -1,83 +1,83 @@
 import fs from 'fs-extra'
-import {PicGo} from "electron-picgo";
-import Color from 'color';
-
-import {OFFSET} from "./attr";
+import { type PicGo } from 'electron-picgo'
+import Color from 'color'
+import arrayBufferToBuffer from 'arraybuffer-to-buffer'
+import { OFFSET } from './attr'
 
 export enum PositionType {
-  lt = "left-top",
-  ct = "center-top",
-  rt = "right-top",
-  lm = "left-middle",
-  cm = "center-middle",
-  rm = "right-middle",
-  lb = "left-bottom",
-  cb = "center-bottom",
-  rb = "right-bottom"
+  lt = 'left-top',
+  ct = 'center-top',
+  rt = 'right-top',
+  lm = 'left-middle',
+  cm = 'center-middle',
+  rm = 'right-middle',
+  lb = 'left-bottom',
+  cb = 'center-bottom',
+  rb = 'right-bottom'
 }
 
 interface ICoordinate {
-  left: number;
-  top: number;
+  left: number
+  top: number
 }
 
 export const getCoordinateByPosition = (prop: {
-  width: number;
-  height: number;
+  width: number
+  height: number
   waterMark: {
-    width: number;
-    height: number;
-    position: PositionType;
-  };
+    width: number
+    height: number
+    position: PositionType
+  }
 }): ICoordinate => {
-  const {width, height, waterMark} = prop;
-  const p = waterMark.position.split("-");
+  const { width, height, waterMark } = prop
+  const p = waterMark.position.split('-')
   return p.reduce(
     (acc, pos) => {
       switch (pos) {
-        case "left":
-          acc.left = OFFSET.X;
-          break;
-        case "center":
-          acc.left = Math.floor((width - waterMark.width) / 2);
-          break;
-        case "right":
-          acc.left = Math.floor(width - OFFSET.X - waterMark.width);
-          break;
-        case "top":
-          acc.top = OFFSET.Y;
-          break;
-        case "middle":
-          acc.top = Math.floor((height - waterMark.height) / 2);
-          break;
-        case "bottom":
-          acc.top = Math.floor(height - OFFSET.Y - waterMark.height);
-          break;
+        case 'left':
+          acc.left = OFFSET.X
+          break
+        case 'center':
+          acc.left = Math.floor((width - waterMark.width) / 2)
+          break
+        case 'right':
+          acc.left = Math.floor(width - OFFSET.X - waterMark.width)
+          break
+        case 'top':
+          acc.top = OFFSET.Y
+          break
+        case 'middle':
+          acc.top = Math.floor((height - waterMark.height) / 2)
+          break
+        case 'bottom':
+          acc.top = Math.floor(height - OFFSET.Y - waterMark.height)
+          break
       }
-      return acc;
+      return acc
     },
-    {left: 0, top: 0}
-  );
-};
+    { left: 0, top: 0 }
+  )
+}
 
 export interface IConfig {
-  text: string;
-  textColor: string;
-  position: string;
-  fontSize: string;
-  image: string;
-  fontFamily: string;
-  minSize: string;
-  minWidth?: number;
-  minHeight?: number;
-  parsedFontSize?: number;
+  text: string
+  textColor: string
+  position: string
+  fontSize: string
+  image: string
+  fontFamily: string
+  minSize: string
+  minWidth?: number
+  minHeight?: number
+  parsedFontSize?: number
 }
 
 export const isEmptyString = (str: any): boolean => {
   if (!str) {
     return true
   }
-  if (!(typeof str === "string")) {
+  if (!(typeof str === 'string')) {
     return true
   }
   return str.trim().length === 0
@@ -93,29 +93,29 @@ export const parseAndValidate: (
     minSize = config.fontSize
     textColor = config.textColor
   }
-  let parsedConfig: IConfig = {...config};
-  let errors = [];
+  const parsedConfig: IConfig = { ...config }
+  const errors = []
   // 无效数字且不为空
   if (!isEmptyString(fontSize)) {
     if (isNaN(parseInt(fontSize))) {
-      errors.push("fontSize");
+      errors.push('fontSize')
     }
     parsedConfig.parsedFontSize = parseInt(fontSize)
   } else {
-    parsedConfig.parsedFontSize = 14;
+    parsedConfig.parsedFontSize = 14
   }
   if (!isEmptyString(position) && !PositionType[position]) {
-    errors.push("position");
+    errors.push('position')
   } else {
-    parsedConfig.position = "rt"
+    parsedConfig.position = position
   }
   if (!isEmptyString(minSize)) {
-    let [minWidth, minHeight] = minSize.split("*").map((v: string) => +v);
+    const [minWidth, minHeight] = minSize.split('*').map((v: string) => +v)
     if (!minWidth || !minHeight) {
-      errors.push("minSize");
+      errors.push('minSize')
     } else {
-      parsedConfig.minHeight = minHeight;
-      parsedConfig.minWidth = minWidth;
+      parsedConfig.minHeight = minHeight
+      parsedConfig.minWidth = minWidth
     }
   }
   if (!isEmptyString(textColor)) {
@@ -131,8 +131,8 @@ export const parseAndValidate: (
       ...config,
       ...parsedConfig
     }
-  ];
-};
+  ]
+}
 
 // 是否是网络图片
 export const isUrl: (url: string) => boolean = (url) => {
@@ -140,7 +140,7 @@ export const isUrl: (url: string) => boolean = (url) => {
 }
 
 export const downloadImage: (ctx: PicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
-  const res = await ctx.request({method: 'GET', url, encoding: null})
+  const res = await ctx.request({ method: 'GET', url, encoding: null })
   ctx.log.error(res)
   return null
   // return await ctx.request({ method: 'GET', url, encoding: null })
@@ -155,10 +155,18 @@ export const downloadImage: (ctx: PicGo, url: string) => Promise<Buffer> = async
   // })
 }
 
-export const getImageBufferData: (ctx: PicGo, imageUrl: string) => Promise<Buffer> = (ctx, imageUrl) => {
+export const getImageBufferData: (ctx: PicGo, imageUrl: string) => Promise<Buffer> = async (ctx, imageUrl) => {
   if (isUrl(imageUrl)) {
-    return downloadImage(ctx, imageUrl)
+    return await downloadImage(ctx, imageUrl)
   } else {
-    return fs.readFile(imageUrl)
+    return await fs.readFile(imageUrl)
   }
+}
+
+export const readBuffer = (buf: any): Buffer => {
+  let imageBuffer = buf
+  if (imageBuffer instanceof ArrayBuffer) {
+    imageBuffer = arrayBufferToBuffer(imageBuffer)
+  }
+  return imageBuffer
 }
