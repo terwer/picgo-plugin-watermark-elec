@@ -1,11 +1,9 @@
-import Picgo from "picgo";
-import dayjs from 'dayjs';
-import fs from 'fs-extra'
-
-import sharp from "sharp";
+import {Logger, PicGo} from "electron-picgo";
+import {getCoordinateByPosition, getImageBufferData, PositionType} from "./util";
+import images from "images";
 import path from "path";
-import Logger from "picgo/dist/src/lib/Logger";
-import { getCoordinateByPosition, PositionType, getImageBufferData } from "./util";
+import dayjs from "dayjs";
+import fs from "fs-extra";
 
 interface IInput {
   input: any[];
@@ -16,75 +14,80 @@ interface IInput {
 }
 
 export const inputAddWaterMarkHandle: (
-  ctx: Picgo,
+  ctx: PicGo,
   iinput: IInput,
   logger: Logger
 ) => Promise<string[]> = async (ctx, imageInput, logger) => {
-  const { input, minWidth, minHeight, waterMark, position } = imageInput;
-  const sharpedWaterMark = sharp(waterMark);
-  const waterMarkMeta = await sharpedWaterMark.metadata();
+  const {input, minWidth, minHeight, waterMark, position} = imageInput;
+  console.log("waterMark=>", waterMark)
+  console.log("position=>", position)
 
   const addedWaterMarkInput = await Promise.all(
     input.map(async image => {
       let addWaterMarkImagePath = '';
 
-      // get image buffer data
+      let coordinate = {
+        left: 0,
+        top: 0
+      }
+
+      // 加载水印
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      const watermarkObj = images(waterMark)
+      const watermarkSize = watermarkObj.size()
+
+      //加载图像文件
       const imageBuffer = await getImageBufferData(ctx, image)
+      const imagesObj = images(imageBuffer)
+      const size = imagesObj.size()
 
-      const sharpedImage = sharp(imageBuffer);
-
-      const { width, height, format } = await sharpedImage.metadata();
-      const coordinate = getCoordinateByPosition({
-        width,
-        height,
-        waterMark: {
-          width: waterMarkMeta.width,
-          height: waterMarkMeta.height,
+      // 等比缩放图像到400像素宽
+      // imagesObj.size(400)
+      // 在(10,10)处绘制Logo
+      coordinate = getCoordinateByPosition({
+        width: size.width, height: size.height, waterMark: {
+          width: watermarkSize.width,
+          height: watermarkSize.height,
           position: PositionType[position]
         }
-      });
-      logger.info(JSON.stringify(coordinate));
-      logger.info(`watermark 图片文件格式：${format}`)
+      })
+      console.log("coordinate=>", coordinate)
 
       // Picture width or length is too short, do not add watermark
       // Or trigger minimum size limit
       if (
         coordinate.left <= 0 ||
         coordinate.top <= 0 ||
-        width <= minWidth ||
-        height <= minHeight
+        size.width <= minWidth ||
+        size.height <= minHeight
       ) {
         addWaterMarkImagePath = image;
         logger.info('watermark 图片尺寸不满足，跳过水印添加')
       } else {
-        // 如果图片是 picgo 生成的图片，则说明是剪切板图片
-        // https://github.com/PicGo/PicGo-Core/blob/85ecd16253ea58910de63511ea95e6f6fb6249d6/src/utils/getClipboardImage.ts#L25
-        if (ctx.baseDir === path.dirname(image)) {
-          addWaterMarkImagePath = image
-        } else {
-          // not a clipboard image, generate a new file to save watermark image
-          // 如果不是剪切板图片，说明图片为通过拖拽或选择的本地图片、或者是网络图片的url，需要在 picgo 目录下生成一个图片
-          // 用于存放添加水印后的图片
-          const extname = format || path.extname(image) || 'png'
-          addWaterMarkImagePath = path.join(ctx.baseDir, `${dayjs().format('YYYYMMDDHHmmss')}.${extname}`)
+        const extname = path.extname(image) || 'png'
+        addWaterMarkImagePath = path.join(ctx.baseDir, `${dayjs().format('YYYYMMDDHHmmss')}.${extname}`)
+        console.log("addWaterMarkImagePath=>", addWaterMarkImagePath)
 
-          ctx.once('failed', () => {
-            // 删除 picgo 生成的图片文件，例如 `~/.picgo/20200621205720.png`
-            fs.remove(addWaterMarkImagePath).catch((e) => { ctx.log.error(e) })
+        ctx.once('failed', () => {
+          // 删除 picgo 生成的图片文件，例如 `~/.picgo/20200621205720.png`
+          fs.remove(addWaterMarkImagePath).catch((e) => {
+            ctx.log.error(e)
           })
-          ctx.once('finished', () => {
-            // 删除 picgo 生成的图片文件，例如 `~/.picgo/20200621205720.png`
-            fs.remove(addWaterMarkImagePath).catch((e) => { ctx.log.error(e) })
-          })
-        }
+        })
 
-        await sharpedImage
-          .composite([
-            {
-              input: await sharpedWaterMark.toBuffer(),
-              ...coordinate
-            }
-          ]).toFile(addWaterMarkImagePath)
+        ctx.once('finished', () => {
+          // 删除 picgo 生成的图片文件，例如 `~/.picgo/20200621205720.png`
+          fs.remove(addWaterMarkImagePath).catch((e) => {
+            ctx.log.error(e)
+          })
+        })
+
+        imagesObj.draw(watermarkObj, coordinate.left, coordinate.top)
+        // 保存图片到文件,图片质量为50
+        imagesObj.save(addWaterMarkImagePath, {
+          quality: 50
+        });
 
         logger.info('watermark 水印添加成功')
       }

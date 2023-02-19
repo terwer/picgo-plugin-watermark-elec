@@ -1,8 +1,8 @@
 import fs from 'fs-extra'
-import Picgo from "picgo";
+import {PicGo} from "electron-picgo";
 import Color from 'color';
 
-import { OFFSET } from "./attr";
+import {OFFSET} from "./attr";
 
 export enum PositionType {
   lt = "left-top",
@@ -20,6 +20,7 @@ interface ICoordinate {
   left: number;
   top: number;
 }
+
 export const getCoordinateByPosition = (prop: {
   width: number;
   height: number;
@@ -29,7 +30,7 @@ export const getCoordinateByPosition = (prop: {
     position: PositionType;
   };
 }): ICoordinate => {
-  const { width, height, waterMark } = prop;
+  const {width, height, waterMark} = prop;
   const p = waterMark.position.split("-");
   return p.reduce(
     (acc, pos) => {
@@ -55,7 +56,7 @@ export const getCoordinateByPosition = (prop: {
       }
       return acc;
     },
-    { left: 0, top: 0 }
+    {left: 0, top: 0}
   );
 };
 
@@ -71,23 +72,32 @@ export interface IConfig {
   minHeight?: number;
   parsedFontSize?: number;
 }
+
+const isEmptyFiled = (str) => {
+  return str !== null && str.trim() !== "";
+}
+
 export const parseAndValidate: (
   config: IConfig
 ) => [string[], IConfig] = config => {
-  const { position, fontSize, minSize, textColor } = config;
-  const parsedFontSize = parseInt(fontSize);
-  let parsedConfig: IConfig = { ...config };
+  const {position, fontSize, minSize, textColor} = config;
+  let parsedConfig: IConfig = {...config};
   let errors = [];
   // 无效数字且不为空
-  if (isNaN(parsedFontSize) && fontSize !== null) {
-    errors.push("fontSize");
+  if (!isEmptyFiled(isEmptyFiled)) {
+    if (isNaN(parseInt(fontSize))) {
+      errors.push("fontSize");
+    }
+    parsedConfig.parsedFontSize = parseInt(fontSize)
   } else {
-    parsedConfig.parsedFontSize = parsedFontSize;
+    parsedConfig.parsedFontSize = 14;
   }
   if (position && !PositionType[position]) {
     errors.push("position");
+  } else {
+    parsedConfig.position = "rt"
   }
-  if (minSize) {
+  if (!isEmptyFiled(minSize)) {
     let [minWidth, minHeight] = minSize.split("*").map((v: string) => +v);
     if (!minWidth || !minHeight) {
       errors.push("minSize");
@@ -96,7 +106,7 @@ export const parseAndValidate: (
       parsedConfig.minWidth = minWidth;
     }
   }
-  if (textColor) {
+  if (!isEmptyFiled(textColor)) {
     try {
       parsedConfig.textColor = Color(textColor).hex()
     } catch (error) {
@@ -117,20 +127,23 @@ export const isUrl: (url: string) => boolean = (url) => {
   return /^https?:\/\//.test(url)
 }
 
-export const downloadImage: (ctx: Picgo, url: string) => Promise<Buffer> = async (ctx, url) => {
-  return await ctx.request({ method: 'GET', url, encoding: null })
-    .on('error', function(err) {
-      ctx.log.error(`网络图片下载失败，${url}`)
-      ctx.log.error(err)
-    }).on('response', (response: Response): void => {
-      const contentType = response.headers['content-type']
-      if (contentType && !contentType.includes('image')) {
-        throw new Error(`${url} is not image`)
-      }
-  })
+export const downloadImage: (ctx: PicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
+  const res = await ctx.request({method: 'GET', url, encoding: null})
+  ctx.log.error(res)
+  return null
+  // return await ctx.request({ method: 'GET', url, encoding: null })
+  //   .on('error', function(err) {
+  //     ctx.log.error(`网络图片下载失败，${url}`)
+  //     ctx.log.error(err)
+  //   }).on('response', (response: Response): void => {
+  //     const contentType = response.headers['content-type']
+  //     if (contentType && !contentType.includes('image')) {
+  //       throw new Error(`${url} is not image`)
+  //     }
+  // })
 }
 
-export const getImageBufferData: (ctx: Picgo, imageUrl: string) => Promise<Buffer> = (ctx, imageUrl) => {
+export const getImageBufferData: (ctx: PicGo, imageUrl: string) => Promise<Buffer> = (ctx, imageUrl) => {
   if (isUrl(imageUrl)) {
     return downloadImage(ctx, imageUrl)
   } else {

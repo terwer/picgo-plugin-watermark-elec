@@ -1,10 +1,10 @@
-import Picgo from "picgo";
-import { IPluginConfig } from "picgo/dist/src/utils/interfaces";
+import {PicGo} from "electron-picgo";
+import {IPluginConfig} from "electron-picgo";
 
 import {IConfig} from './util'
 
-export const config: (ctx: Picgo) => IPluginConfig[] = ctx => {
-  let userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark");
+export const config: (ctx: PicGo) => IPluginConfig[] = ctx => {
+  let userConfig = ctx.getConfig<IConfig>("picgo-plugin-watermark-electron");
   if (!userConfig) {
     userConfig = {
       image: '',
@@ -29,7 +29,7 @@ export const config: (ctx: Picgo) => IPluginConfig[] = ctx => {
       name: "text",
       type: "input",
       default: userConfig.text,
-      required: false,
+      required: true,
       message: "文字，默认只支持英文，中文支持需要配置字体文件路径",
       alias: "水印文字"
     },
@@ -46,7 +46,7 @@ export const config: (ctx: Picgo) => IPluginConfig[] = ctx => {
       type: "input",
       default: userConfig.fontSize,
       required: false,
-      message: "默认 14px",
+      message: "字体大小，默认`14`",
       alias: "字体大小"
     },
     {

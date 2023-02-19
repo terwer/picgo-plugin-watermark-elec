@@ -1,6 +1,6 @@
 import sharp from "sharp";
 import path from "path";
-import Logger from "picgo/dist/src/lib/Logger";
+import {Logger} from "electron-picgo";
 import { getCoordinateByPosition, PositionType } from "./util";
 
 interface IInput {

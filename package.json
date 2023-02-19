@@ -1,15 +1,17 @@
 {
-  "name": "picgo-plugin-watermark",
-  "version": "1.2.1",
-  "description": "PicGo's watermark plugin",
+  "name": "picgo-plugin-watermark-electron",
+  "version": "1.2.2",
+  "description": "PicGo's watermark plugin for electron",
   "main": "./lib/index.js",
   "bin": {},
   "scripts": {
     "dev": "tsc -w -p .",
-    "build": "tsc -p .",
+    "build": "tsc -p . && cp ./lib/src/* ./lib && rm -rf ./lib/src && rm -rf ./lib/test",
+    "testBuild": "tsc -p . && cp ./lib/src/* ./lib && rm -rf ./lib/src",
     "clean": "rimraf lib",
-    "test": "echo 'test'",
+    "test": "npm run testBuild && node lib/test/test.js",
     "lint": "eslint src/*.ts --fix",
+    "package": "bash scripts/package.sh",
     "release": "standard-version"
   },
   "publishConfig": {
@@ -21,31 +23,33 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dec-F/picgo-plugin-watermark"
+    "url": "https://github.com/terwer/picgo-plugin-watermark-electron"
   },
-  "homepage": "https://github.com/Dec-F/picgo-plugin-watermark",
+  "homepage": "https://github.com/terwer/picgo-plugin-watermark-electron",
   "keywords": [
     "npm",
     "node",
     "watermark",
     "picgo",
-    "picgo-gui-plugin"
+    "picgo-gui-plugin",
+    "electron"
   ],
-  "author": "Dec-F",
+  "author": "terwer",
   "contributors": [
-    "panyanbin <me@panyanbin.com> (https://www.panyanbin.com)"
+    "panyanbin <me@panyanbin.com> (https://www.panyanbin.com)",
+    "terwer <youweics@163.com> (https://terwer.space)"
   ],
   "license": "MIT",
   "devDependencies": {
     "@types/fs-extra": "^9.0.12",
-    "@types/node": "^12.12.21",
+    "@types/node": "^14.18.36",
     "@types/sharp": "^0.23.1",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
     "@typescript-eslint/parser": "^2.7.0",
     "chai": "^4.1.2",
+    "electron-picgo": "^1.5.7",
     "eslint": "^5.16.0",
-    "mocha": "^6.1.3",
-    "picgo": "^1.3.7",
+    "mocha": "^10.2.0",
     "standard-version": "^8.0.1",
     "typescript": "^3.7.2"
   },
@@ -53,10 +57,10 @@
     "color": "^3.1.3",
     "dayjs": "^1.10.6",
     "fs-extra": "^10.0.0",
-    "sharp": "^0.29.1",
+    "images": "^3.2.4",
     "text-to-svg": "^3.1.5"
   },
   "engines": {
-    "node": ">12.13.0"
+    "node": ">14.21.3"
   }
 }
