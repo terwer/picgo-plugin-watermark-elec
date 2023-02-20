@@ -1,7 +1,6 @@
 import fs from 'fs-extra'
 import { type PicGo } from 'electron-picgo'
 import Color from 'color'
-import arrayBufferToBuffer from 'arraybuffer-to-buffer'
 import { OFFSET } from './attr'
 
 export enum PositionType {
@@ -163,12 +162,4 @@ export const getImageBufferData: (ctx: PicGo, imageUrl: string) => Promise<Buffe
   } else {
     return await fs.readFile(imageUrl)
   }
-}
-
-export const readBuffer = (buf: any): Buffer => {
-  let imageBuffer = buf
-  if (imageBuffer instanceof ArrayBuffer) {
-    imageBuffer = arrayBufferToBuffer(imageBuffer)
-  }
-  return imageBuffer
 }
