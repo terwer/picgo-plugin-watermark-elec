@@ -1,6 +1,6 @@
 {
   "name": "picgo-plugin-watermark-elec",
-  "version": "1.2.3",
+  "version": "1.2.7",
   "description": "PicGo's watermark plugin for electron",
   "main": "./lib/index.js",
   "bin": {},
