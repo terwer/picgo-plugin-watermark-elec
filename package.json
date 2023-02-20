@@ -49,6 +49,7 @@
     "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
     "standard-version": "^8.0.1",
     "typescript": "^4.9.3"
   },
