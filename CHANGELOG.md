@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.9](https://github.com/terwer/picgo-plugin-watermark-elec/compare/v1.2.8...v1.2.9) (2023-02-20)
+
+
+### Bug Fixes
+
+* add fonts folder ([29f31dc](https://github.com/terwer/picgo-plugin-watermark-elec/commit/29f31dcaffa0f75b4f9f1b6d36384c8ac773d420))
+
 ### [1.2.8](https://github.com/terwer/picgo-plugin-watermark-elec/compare/v1.2.7...v1.2.8) (2023-02-20)
 
 
