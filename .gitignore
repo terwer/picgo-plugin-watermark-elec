@@ -45,5 +45,3 @@ others
 .cache
 dist
 fixture/
-test/textWatermark.png
-fonts/terwer.png
