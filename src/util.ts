@@ -107,7 +107,7 @@ export const parseAndValidate: (
   if (!isEmptyString(position) && !PositionType[position]) {
     errors.push('position')
   } else {
-    parsedConfig.position = position || "rt"
+    parsedConfig.position = position || 'rt'
   }
   if (!isEmptyString(minSize)) {
     const [minWidth, minHeight] = minSize.split('*').map((v: string) => +v)
@@ -124,8 +124,8 @@ export const parseAndValidate: (
     } catch (error) {
       errors.push('textColor')
     }
-  }else{
-    parsedConfig.textColor = Color("#af36c2").hex()
+  } else {
+    parsedConfig.textColor = Color('#af36c2').hex()
   }
   return [
     errors,

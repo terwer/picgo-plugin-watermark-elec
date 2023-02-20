@@ -1,6 +1,5 @@
-import {fontOptions} from './attr'
-import Text2svg from "text2svg";
-import svg2img from "svg2img";
+import { fontOptions } from './attr'
+import svg2img from 'svg2img'
 
 export const getSvg = async (
   text: string,
@@ -25,9 +24,9 @@ export const getSvg = async (
       svgOptions.fontFamily = options.fontFamily
     }
   }
-  console.log("fontFamily=>", svgOptions.fontFamily)
+  console.log('fontFamily=>', svgOptions.fontFamily)
 
-  const logo = require('logo.svg');
+  const logo = require('logo.svg')
   // const text2svg = new Text2svg(svgOptions.fontFamily)
   // const svg = text2svg.toSVG(text, svgOptions).svg
   // console.log("svg=>", svg)
@@ -38,16 +37,16 @@ export const getSvg = async (
     path: {
       fill: svgOptions.fill
     }
-  });
+  })
 
   const buffer = await new Promise((resolve, reject) => {
     svg2img(svg, function (error, buffer) {
       if (error) {
-        throw new Error("文字水印转失败", error)
+        throw new Error('文字水印转失败', error)
         // reject(error)
       }
       resolve(buffer)
-    });
+    })
   })
   return buffer
 }

@@ -21,8 +21,8 @@ export const config: (ctx: PicGo) => IPluginConfig[] = ctx => {
       type: 'input',
       default: userConfig.fontFamily,
       required: false,
-      message: "字体文件路径；水印中有汉字时，此项必须有",
-      alias: "字体文件路径"
+      message: '字体文件路径；水印中有汉字时，此项必须有',
+      alias: '字体文件路径'
     },
     {
       name: 'text',
