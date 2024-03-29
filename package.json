@@ -9,7 +9,6 @@
     "clean": "rimraf lib",
     "test": "ts-node test/test.ts",
     "lint": "eslint src/*.ts --fix && eslint test/*.ts --fix",
-    "package": "bash scripts/package.sh",
     "release": "standard-version"
   },
   "publishConfig": {
