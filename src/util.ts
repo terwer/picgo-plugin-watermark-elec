@@ -156,7 +156,7 @@ export const isBuffer = (val: any): boolean => {
   return toString.call(val) === '[object Buffer]'
 }
 
-export const downloadImage: (ctx: IPicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
+export const downloadImage: (ctx: IPicGo, url: string) => Promise<Buffer> = async (ctx, url): Promise<any> => {
   const res = await ctx.request({ method: 'GET', url, encoding: null })
   ctx.log.error(res)
   return res
