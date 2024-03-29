@@ -1,4 +1,4 @@
-# picgo-plugin-watermark
+# picgo-plugin-watermark-elec
 
 # Screenshot
 
@@ -10,7 +10,7 @@
 
 # Features
 
-Add watermark to picture
+Add watermark to picture from electron apps
 
 # Installation
 
