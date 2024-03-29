@@ -140,16 +140,42 @@ export const isUrl: (url: string) => boolean = (url) => {
   return /^https?:\/\//.test(url)
 }
 
+
+function isBlob(val: any) {
+  return toString.call(val) === "[object Blob]"
+}
+
+function isFile(val: any) {
+  return toString.call(val) === "[object File]"
+}
+
+export const isFileOrBlob = (val: any): boolean => {
+  return isBlob(val) || isFile(val)
+}
+
+export const isBuffer = (val: any): boolean => {
+  return toString.call(val) === "[object Buffer]"
+}
+
 export const downloadImage: (ctx: IPicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
   const res = await ctx.request({method: 'GET', url, encoding: null})
   ctx.log.error(res)
   return null
 }
 
-export const getImageBufferData: (ctx: IPicGo, imageUrl: string) => Promise<Buffer> = async (ctx, imageUrl) => {
-  if (isUrl(imageUrl)) {
-    return await downloadImage(ctx, imageUrl)
-  } else {
-    return await fs.readFile(imageUrl)
+export const getImageBufferData: (ctx: IPicGo, imageUrl: any) => Promise<Buffer> = async (ctx, imageUrl: any) => {
+  try {
+    if (isBuffer(imageUrl)) {
+      return imageUrl
+    } else if (isFileOrBlob(imageUrl)) {
+      const buf = await imageUrl.arrayBuffer();
+      return Buffer.from(buf)
+    } else if (isUrl(imageUrl)) {
+      return await downloadImage(ctx, imageUrl)
+    } else {
+      return await fs.readFile(imageUrl)
+    }
+  } catch (e: any) {
+    throw new Error("get buffer error =>" + e.toString())
   }
 }

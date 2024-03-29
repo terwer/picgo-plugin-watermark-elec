@@ -76,7 +76,7 @@ export const inputAddWaterMarkHandle: (
         addWaterMarkImagePath = image
         logger.info('watermark 图片尺寸不满足，跳过水印添加')
       } else {
-        const extname = path.extname(image) || 'png'
+        const extname = (typeof image === "string") ? path.extname(image) : 'png'
         addWaterMarkImagePath = path.join(ctx.baseDir, `${dayjs().format('YYYYMMDDHHmmss')}.${extname}`)
         console.log('addWaterMarkImagePath=>', addWaterMarkImagePath)
 
