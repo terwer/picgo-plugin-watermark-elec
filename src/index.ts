@@ -1,8 +1,8 @@
-import {IPicGo} from './types'
-import {type IConfig, isEmptyString, parseAndValidate} from './util'
-import {getSvg} from './text2svg'
-import {config} from './config'
-import {inputAddWaterMarkHandle} from './input'
+import { type IPicGo } from './types'
+import { type IConfig, isEmptyString, parseAndValidate } from './util'
+import { getSvg } from './text2svg'
+import { config } from './config'
+import { inputAddWaterMarkHandle } from './input'
 import path from 'path'
 
 const handle = async (ctx: IPicGo): Promise<IPicGo | boolean> => {
@@ -73,7 +73,7 @@ const handle = async (ctx: IPicGo): Promise<IPicGo | boolean> => {
 
 export = (ctx: IPicGo): any => {
   const register: () => void = () => {
-    ctx.helper.beforeTransformPlugins.register('watermark', {handle})
+    ctx.helper.beforeTransformPlugins.register('watermark', { handle })
   }
   return {
     register,

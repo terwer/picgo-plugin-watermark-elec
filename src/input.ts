@@ -1,5 +1,5 @@
-import {ILogger, IPicGo} from './types'
-import {getCoordinateByPosition, getImageBufferData, PositionType} from './util'
+import { type ILogger, type IPicGo } from './types'
+import { getCoordinateByPosition, getImageBufferData, PositionType } from './util'
 import images from 'images'
 import path from 'path'
 import dayjs from 'dayjs'
@@ -18,7 +18,7 @@ export const inputAddWaterMarkHandle: (
   iinput: IInput,
   logger: ILogger
 ) => Promise<string[]> = async (ctx, imageInput, logger) => {
-  const {input, minWidth, minHeight, waterMark, position} = imageInput
+  const { input, minWidth, minHeight, waterMark, position } = imageInput
   console.log('waterMark=>', waterMark)
   console.log('position=>', position)
 
@@ -76,7 +76,7 @@ export const inputAddWaterMarkHandle: (
         addWaterMarkImagePath = image
         logger.info('watermark 图片尺寸不满足，跳过水印添加')
       } else {
-        const extname = (typeof image === "string") ? path.extname(image) : 'png'
+        const extname = (typeof image === 'string') ? path.extname(image) : 'png'
         addWaterMarkImagePath = path.join(ctx.baseDir, `${dayjs().format('YYYYMMDDHHmmss')}.${extname}`)
         console.log('addWaterMarkImagePath=>', addWaterMarkImagePath)
 

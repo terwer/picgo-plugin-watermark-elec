@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import Color from 'color'
-import {OFFSET} from './attr'
-import {IPicGo} from './types'
+import { OFFSET } from './attr'
+import { type IPicGo } from './types'
 
 export enum PositionType {
   lt = 'left-top',
@@ -29,7 +29,7 @@ export const getCoordinateByPosition = (prop: {
     position: PositionType
   }
 }): ICoordinate => {
-  const {width, height, waterMark} = prop
+  const { width, height, waterMark } = prop
   const p = waterMark.position.split('-')
   return p.reduce(
     (acc, pos) => {
@@ -55,7 +55,7 @@ export const getCoordinateByPosition = (prop: {
       }
       return acc
     },
-    {left: 0, top: 0}
+    { left: 0, top: 0 }
   )
 }
 
@@ -92,7 +92,7 @@ export const parseAndValidate: (
     minSize = config.minSize
     textColor = config.textColor
   }
-  const parsedConfig: IConfig = {...config}
+  const parsedConfig: IConfig = { ...config }
   const errors = []
   // 无效数字且不为空
   if (!isEmptyString(fontSize)) {
@@ -140,13 +140,12 @@ export const isUrl: (url: string) => boolean = (url) => {
   return /^https?:\/\//.test(url)
 }
 
-
-function isBlob(val: any) {
-  return toString.call(val) === "[object Blob]"
+function isBlob (val: any): boolean {
+  return toString.call(val) === '[object Blob]'
 }
 
-function isFile(val: any) {
-  return toString.call(val) === "[object File]"
+function isFile (val: any): boolean {
+  return toString.call(val) === '[object File]'
 }
 
 export const isFileOrBlob = (val: any): boolean => {
@@ -154,11 +153,11 @@ export const isFileOrBlob = (val: any): boolean => {
 }
 
 export const isBuffer = (val: any): boolean => {
-  return toString.call(val) === "[object Buffer]"
+  return toString.call(val) === '[object Buffer]'
 }
 
 export const downloadImage: (ctx: IPicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
-  const res = await ctx.request({method: 'GET', url, encoding: null})
+  const res = await ctx.request({ method: 'GET', url, encoding: null })
   ctx.log.error(res)
   return null
 }
@@ -168,7 +167,7 @@ export const getImageBufferData: (ctx: IPicGo, imageUrl: any) => Promise<Buffer>
     if (isBuffer(imageUrl)) {
       return imageUrl
     } else if (isFileOrBlob(imageUrl)) {
-      const buf = await imageUrl.arrayBuffer();
+      const buf = await imageUrl.arrayBuffer()
       return Buffer.from(buf)
     } else if (isUrl(imageUrl)) {
       return await downloadImage(ctx, imageUrl)
@@ -176,6 +175,6 @@ export const getImageBufferData: (ctx: IPicGo, imageUrl: any) => Promise<Buffer>
       return await fs.readFile(imageUrl)
     }
   } catch (e: any) {
-    throw new Error("get buffer error =>" + e.toString())
+    throw new Error('get buffer error =>' + e.toString())
   }
 }
