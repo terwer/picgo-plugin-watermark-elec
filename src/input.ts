@@ -1,5 +1,5 @@
-import { type Logger, type PicGo } from 'electron-picgo'
-import { getCoordinateByPosition, getImageBufferData, PositionType } from './util'
+import {ILogger, IPicGo} from './types'
+import {getCoordinateByPosition, getImageBufferData, PositionType} from './util'
 import images from 'images'
 import path from 'path'
 import dayjs from 'dayjs'
@@ -14,11 +14,11 @@ interface IInput {
 }
 
 export const inputAddWaterMarkHandle: (
-  ctx: PicGo,
+  ctx: IPicGo,
   iinput: IInput,
-  logger: Logger
+  logger: ILogger
 ) => Promise<string[]> = async (ctx, imageInput, logger) => {
-  const { input, minWidth, minHeight, waterMark, position } = imageInput
+  const {input, minWidth, minHeight, waterMark, position} = imageInput
   console.log('waterMark=>', waterMark)
   console.log('position=>', position)
 

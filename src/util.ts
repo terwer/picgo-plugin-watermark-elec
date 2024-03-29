@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
-import { type PicGo } from 'electron-picgo'
 import Color from 'color'
-import { OFFSET } from './attr'
+import {OFFSET} from './attr'
+import {IPicGo} from './types'
 
 export enum PositionType {
   lt = 'left-top',
@@ -29,7 +29,7 @@ export const getCoordinateByPosition = (prop: {
     position: PositionType
   }
 }): ICoordinate => {
-  const { width, height, waterMark } = prop
+  const {width, height, waterMark} = prop
   const p = waterMark.position.split('-')
   return p.reduce(
     (acc, pos) => {
@@ -55,7 +55,7 @@ export const getCoordinateByPosition = (prop: {
       }
       return acc
     },
-    { left: 0, top: 0 }
+    {left: 0, top: 0}
   )
 }
 
@@ -92,7 +92,7 @@ export const parseAndValidate: (
     minSize = config.minSize
     textColor = config.textColor
   }
-  const parsedConfig: IConfig = { ...config }
+  const parsedConfig: IConfig = {...config}
   const errors = []
   // 无效数字且不为空
   if (!isEmptyString(fontSize)) {
@@ -140,23 +140,13 @@ export const isUrl: (url: string) => boolean = (url) => {
   return /^https?:\/\//.test(url)
 }
 
-export const downloadImage: (ctx: PicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
-  const res = await ctx.request({ method: 'GET', url, encoding: null })
+export const downloadImage: (ctx: IPicGo, url: string) => Promise<Buffer> = async (ctx, url) => {
+  const res = await ctx.request({method: 'GET', url, encoding: null})
   ctx.log.error(res)
   return null
-  // return await ctx.request({ method: 'GET', url, encoding: null })
-  //   .on('error', function(err) {
-  //     ctx.log.error(`网络图片下载失败，${url}`)
-  //     ctx.log.error(err)
-  //   }).on('response', (response: Response): void => {
-  //     const contentType = response.headers['content-type']
-  //     if (contentType && !contentType.includes('image')) {
-  //       throw new Error(`${url} is not image`)
-  //     }
-  // })
 }
 
-export const getImageBufferData: (ctx: PicGo, imageUrl: string) => Promise<Buffer> = async (ctx, imageUrl) => {
+export const getImageBufferData: (ctx: IPicGo, imageUrl: string) => Promise<Buffer> = async (ctx, imageUrl) => {
   if (isUrl(imageUrl)) {
     return await downloadImage(ctx, imageUrl)
   } else {

@@ -1,8 +1,7 @@
-import { type PicGo, type IPluginConfig } from 'electron-picgo'
+import {IPicGo, IPluginConfig} from './types'
+import {type IConfig} from './util'
 
-import { type IConfig } from './util'
-
-export const config: (ctx: PicGo) => IPluginConfig[] = ctx => {
+export const config: (ctx: IPicGo) => IPluginConfig[] = ctx => {
   let userConfig = ctx.getConfig<IConfig>('picgo-plugin-watermark-elec')
   if (!userConfig) {
     userConfig = {

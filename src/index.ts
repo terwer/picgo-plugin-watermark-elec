@@ -1,11 +1,11 @@
-import { type PicGo } from 'electron-picgo'
-import { type IConfig, isEmptyString, parseAndValidate } from './util'
-import { getSvg } from './text2svg'
-import { config } from './config'
-import { inputAddWaterMarkHandle } from './input'
+import {IPicGo} from './types'
+import {type IConfig, isEmptyString, parseAndValidate} from './util'
+import {getSvg} from './text2svg'
+import {config} from './config'
+import {inputAddWaterMarkHandle} from './input'
 import path from 'path'
 
-const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
+const handle = async (ctx: IPicGo): Promise<IPicGo | boolean> => {
   const input = ctx.input
   const userConfig = ctx.getConfig<IConfig>('picgo-plugin-watermark-elec')
 
@@ -71,9 +71,9 @@ const handle = async (ctx: PicGo): Promise<PicGo | boolean> => {
   return ctx
 }
 
-export = (ctx: PicGo): any => {
+export = (ctx: IPicGo): any => {
   const register: () => void = () => {
-    ctx.helper.beforeTransformPlugins.register('watermark', { handle })
+    ctx.helper.beforeTransformPlugins.register('watermark', {handle})
   }
   return {
     register,
