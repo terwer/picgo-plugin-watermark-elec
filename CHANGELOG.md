@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.13](https://github.com/terwer/picgo-plugin-watermark-elec/compare/v1.2.12...v1.2.13) (2024-03-29)
+
+
+### Bug Fixes
+
+* paste error ([933a9a1](https://github.com/terwer/picgo-plugin-watermark-elec/commit/933a9a184108da6e22238b5a2e8e338d8d2f9894))
+* ts error ([aec11b2](https://github.com/terwer/picgo-plugin-watermark-elec/commit/aec11b2a18d50f7edae453898c6b31449d7a2ee4))
+* ts error ([54670d7](https://github.com/terwer/picgo-plugin-watermark-elec/commit/54670d7352462d36c0ec7d0e578f1053ae9b99b2))
+
 ### [1.2.12](https://github.com/terwer/picgo-plugin-watermark-elec/compare/v1.2.11...v1.2.12) (2024-03-29)
 
 ### [1.2.11](https://github.com/terwer/picgo-plugin-watermark-elec/compare/v1.2.10...v1.2.11) (2024-03-29)
